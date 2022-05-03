@@ -14,7 +14,7 @@ export class CreateUserDto {
 
   @IsNumberString()
   @IsNotEmpty()
-  discordId: string;
+  id: string;
 
   @IsOptional()
   avatar: string;

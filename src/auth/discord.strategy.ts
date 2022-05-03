@@ -7,10 +7,7 @@ import { User } from 'src/users/users.service';
 
 @Injectable()
 export class DiscordStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    private authService: AuthService,
-    private configService: ConfigService,
-  ) {
+  constructor(private authService: AuthService, configService: ConfigService) {
     super({
       clientID: configService.get<string>('DISCORD_CLIENT_ID'),
       clientSecret: configService.get<string>('DISCORD_SECRET'),
