@@ -2,7 +2,7 @@ import { Controller, Req, Res, UseGuards, Get } from '@nestjs/common';
 import { Response } from 'express';
 import { DiscordAuthGuard } from './discord-auth.guard';
 import { AuthService } from './auth.service';
-import { Profile } from 'passport-discord';
+import { User } from 'src/users/schemas/user.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -23,13 +23,10 @@ export class AuthController {
     const {
       user,
     }: {
-      user: Profile;
+      user: User;
     } = req;
-
     const jwt = await this.authService.login(user);
-
     res.cookie('session', jwt, { httpOnly: true });
-
     return res.status(201).json({ user, jwt });
   }
 }

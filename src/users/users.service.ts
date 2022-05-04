@@ -1,41 +1,42 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-
-export type User = any;
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { User, UserDocument } from './schemas/user.schema';
+import { DiscordProfile } from 'src/auth/interfaces/discord-profile.interface';
 
 @Injectable()
 export class UsersService {
-  private readonly users: User[];
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  constructor() {
-    // change one of the below discord_id to your Discord ID, else you'll never be able to log in
-    this.users = [
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const createdUser = new this.userModel(createUserDto);
+    return createdUser.save();
+  }
+
+  async findAll(): Promise<User[]> {
+    return this.userModel.find().exec();
+  }
+
+  async removeAll() {
+    await this.userModel.deleteMany({});
+    return `All entries removed from db.`;
+  }
+
+  async findOne(userProfile: DiscordProfile): Promise<User | undefined> {
+    const filter = { discordId: userProfile.id };
+    const projection = { _id: 0 };
+    return this.userModel.findOne(filter, projection);
+  }
+
+  async findOrCreate(userProfile: DiscordProfile): Promise<User | undefined> {
+    return this.userModel.findOneAndUpdate(
+      { discordId: userProfile.id },
+      userProfile,
       {
-        userId: 1,
-        username: 'Teryn',
-        email: 'teresa.alice.alves@gmail.com',
+        new: true,
+        upsert: true,
       },
-    ];
-  }
-
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
-
-  findAll() {
-    return `This action returns all users`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
-
-  async findOne(profileId: string): Promise<User | undefined> {
-    return this.users.find((user) => user.discordId === profileId);
+    );
   }
 }

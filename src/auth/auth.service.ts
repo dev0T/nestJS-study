@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Profile } from 'passport-discord';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/users/schemas/user.schema';
+import { DiscordProfile } from './interfaces/discord-profile.interface';
 
 @Injectable()
 export class AuthService {
@@ -10,13 +11,16 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(userId: string): Promise<boolean> {
-    const user = await this.usersService.findOne(userId);
-    return !!user;
+  async getUserForProfile(userProfile: DiscordProfile): Promise<User> {
+    const user = await this.usersService.findOrCreate(userProfile);
+    return user;
   }
 
-  async login(user: Profile) {
-    const payload = { username: user.username, sub: user.id };
+  async login(user: User) {
+    const payload = {
+      username: user.username,
+      sub: user.discordId,
+    };
     const token = await this.jwtService.signAsync(payload);
     return token;
   }

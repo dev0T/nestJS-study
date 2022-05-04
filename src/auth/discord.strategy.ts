@@ -1,9 +1,10 @@
-import { Strategy, Profile as DiscordProfile } from 'passport-discord';
+import { Strategy } from 'passport-discord';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
-import { User } from 'src/users/users.service';
+import { DiscordProfile } from './interfaces/discord-profile.interface';
+import { User } from 'src/users/schemas/user.schema';
 
 @Injectable()
 export class DiscordStrategy extends PassportStrategy(Strategy) {
@@ -21,11 +22,7 @@ export class DiscordStrategy extends PassportStrategy(Strategy) {
     refreshToken: string,
     profile: DiscordProfile,
   ): Promise<User> {
-    const user = await this.authService.validateUser(profile.id);
-    if (!user) {
-      // create user
-      throw new UnauthorizedException();
-    }
-    return profile;
+    const user = await this.authService.getUserForProfile(profile);
+    return user;
   }
 }

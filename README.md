@@ -72,13 +72,24 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 Nest is [MIT licensed](LICENSE).
 
-Steps: 
-nest new project-name
-Set up Nest Project
-Install configuration package
-  - Create .env file
-  - Update app.module.ts
-  - If configmodule not set to global, import on files where .env needs to be used
-  - Access .env from configService
-Install passport packages
-  npm install --save @nestjs/passport passport passport-discord
+## Study Steps
+
+```
+$ nest new project-name
+```
+
+- Set up Nest Project
+- Install configuration package
+
+- Create .env file
+- Update app.module.ts
+- If configmodule not set to global, import on files where .env needs to be used
+- Inject configService as dependency on the constructor where it needs to be used
+- Access .env from configService
+  -Install passport packages
+
+```
+$ npm install --save @nestjs/passport passport passport-discord
+```
+
+- Create discord strategy
