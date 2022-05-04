@@ -23,9 +23,9 @@ export class UsersService {
     return `All entries removed from db.`;
   }
 
-  async findOne(userProfile: DiscordProfile): Promise<User | undefined> {
-    const filter = { discordId: userProfile.id };
-    const projection = { _id: 0 };
+  async findOne(userId: string): Promise<User | undefined> {
+    const filter = { discordId: userId };
+    const projection = { _id: 0, __v: 0, accessToken: 0 };
     return this.userModel.findOne(filter, projection);
   }
 
@@ -34,6 +34,7 @@ export class UsersService {
       { discordId: userProfile.id },
       userProfile,
       {
+        fields: { _id: 0, __v: 0, accessToken: 0 },
         new: true,
         upsert: true,
       },

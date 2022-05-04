@@ -25,6 +25,7 @@ export class AuthController {
     }: {
       user: User;
     } = req;
+
     const jwt = await this.authService.login(user);
     res.cookie('session', jwt, { httpOnly: true });
     return res.status(201).json({ user, jwt });
